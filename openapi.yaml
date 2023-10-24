@@ -1,0 +1,154 @@
+openapi: 3.1.0
+info:
+  title: "Scheduling API"
+  version: "1.0.0"
+  contact:
+    name: Support
+    email: support@waldeck.io
+    url: https://www.schedulingapi.com
+servers:
+  - url: https://api.schedulingapi.com/v1
+paths:
+  /tasks:
+    post:
+      tags: [Tasks]
+      summary: Create new task
+      responses:
+        '400':
+          $ref: '#/components/responses/400'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/singleTaskResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createTask'
+    get:
+      tags: [Tasks]
+      summary: Retreive tasks
+      responses:
+        '200': 
+          description: OK
+          content:
+            'application/json':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/singleTaskResponse'
+  /tasks/{id}:
+    get:
+      tags: [Tasks]
+      summary: Retreive a single task
+      responses:
+        '200': 
+          description: OK
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/singleTaskResponse' 
+components:
+  responses:
+    '400':
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Request validation failed
+              invalidParams:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: callbackUrl
+                  reason:
+                    type: string
+                    example: Invalid URI format
+  schemas:
+    createTask:
+      type: object
+      properties:
+        name:
+          type: string
+        executeAt:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+        requestBody:
+          type: string
+        requestHeaders:
+          type: object
+          example: {'x-api-key': 'bla'}
+        requestMethod:
+          type: string
+          enum: [GET, POST, OPTIONS, HEAD, PUT, DELETE, TRACE, CONNECT, PATCH]
+        recurringSchedule:
+          $ref: '#/components/schemas/schedule'
+    singleTaskResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        nextExecution:
+          type: string
+          format: date-time
+        lastExecution:
+          type: string
+          format: date-time
+        url:
+          type: string
+          format: uri
+        requestMethod:
+          type: string
+          enum: [GET, POST, OPTIONS, HEAD, PUT, DELETE, TRACE, CONNECT, PATCH]
+        recurringSchedule:
+          $ref: '#/components/schemas/schedule'
+    schedule:
+      type: object
+      properties:
+        expiresAt:
+          type: string
+          format: date-time
+        hours:
+          type: array
+          items:
+            type: integer
+            minimum: 0
+            maximum: 23
+        minutes:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 60
+        months:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 12
+        daysOfWeek:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 7
+        daysOfMonth:
+          type: array
+          items:
+            type: integer
+            minimum: 1
+            maximum: 31
