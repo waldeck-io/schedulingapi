@@ -11,7 +11,6 @@ servers:
 paths:
   /tasks:
     post:
-      tags: [Tasks]
       summary: Create new task
       responses:
         '400':
@@ -29,7 +28,6 @@ paths:
             schema:
               $ref: '#/components/schemas/createTask'
     get:
-      tags: [Tasks]
       summary: Retreive tasks
       responses:
         '200': 
@@ -42,7 +40,6 @@ paths:
                   $ref: '#/components/schemas/singleTaskResponse'
   /tasks/{id}:
     get:
-      tags: [Tasks]
       summary: Retreive a single task
       responses:
         '200': 
@@ -84,14 +81,17 @@ components:
         url:
           type: string
           format: uri
-        requestBody:
-          type: string
-        requestHeaders:
+        request:
           type: object
-          example: {'x-api-key': 'bla'}
-        requestMethod:
-          type: string
-          enum: [GET, POST, OPTIONS, HEAD, PUT, DELETE, TRACE, CONNECT, PATCH]
+          properties:
+            method:
+              type: string
+              enum: [GET, POST, OPTIONS, HEAD, PUT, DELETE, TRACE, CONNECT, PATCH]
+            body:
+              type: string
+            headers:
+              type: object
+              example: {'key': 'value'}
         recurringSchedule:
           $ref: '#/components/schemas/schedule'
     singleTaskResponse:
